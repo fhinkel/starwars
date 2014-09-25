@@ -26,12 +26,12 @@ jQuery(function () {
 
     var xSpaceship = 200;
     var ySpaceship = 200;
+    var radiusSpaceship = 10;
     var polygon1 = new Polygon([100, 100], [0, .1, .25, .35, .5, .65, .75, .9]);
 
     var processInput = function () {
     };
 
-    console.log('blubb');
     jQuery(document).keyup(function (e) {
         var delta = 10;
         switch (e.which) {
@@ -57,12 +57,32 @@ jQuery(function () {
         e.preventDefault(); // prevent the default action (scroll / move caret)
     });
 
+    var calculateCollision = function ()
+    {
+        var asteroidCenter = polygon1.origin;
+        var xA = asteroidCenter[0];
+        var yA = asteroidCenter[1];
+        var fakeAsteroidRadius = radiusSpaceship;
+
+        var xDelta = Math.abs(xA-xSpaceship);
+        var yDelta = Math.abs(yA-ySpaceship);
+
+        var radiusSumSquare = (fakeAsteroidRadius + radiusSpaceship ) * (fakeAsteroidRadius + radiusSpaceship );
+        return (xDelta * xDelta + yDelta *yDelta < radiusSumSquare)
+    };
+
     var update = function () {
+        var crashed = calculateCollision();
+        if (crashed) {
+            jQuery( "body" ).prepend( "<p>CrashBoom</p>" );
+            xSpaceship = 200;
+            ySpaceship = 200;
+        }
     };
 
     var paint_spaceship_on_screen = function (ctx) {
         ctx.beginPath();
-        ctx.arc(xSpaceship, ySpaceship, 10, 0, Math.PI * 2, false);
+        ctx.arc(xSpaceship, ySpaceship, radiusSpaceship, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.strokeStyle = "#000";
         ctx.stroke();
