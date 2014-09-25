@@ -5,8 +5,6 @@ jQuery(function () {
     console.log('WE ARE LOADED!!!!');
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
-    ctx.fillStyle = "#FF0000";
-    ctx.fillRect(0, 0, 150, 75);
 
     var xSpaceship = 200;
     var ySpaceship = 200;
@@ -29,7 +27,13 @@ jQuery(function () {
         ctx.fill();
     };
 
+    var clear_screen = function (ctx) {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, 400, 400);
+    };
+
     var render = function() {
+        clear_screen(ctx);
         paint_spaceship_on_screen(ctx);
     };
 
