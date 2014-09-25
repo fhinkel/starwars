@@ -10,11 +10,35 @@ jQuery(function () {
     var ySpaceship = 200;
 
     var processInput = function () {
-        console.log('processing input...');
     };
 
-    var update = function() {
-        xSpaceship = xSpaceship + 1;
+    console.log('blubb');
+    jQuery(document).keyup(function (e) {
+        var delta = 10;
+        switch (e.which) {
+            case 37: // left
+                xSpaceship = xSpaceship - delta;
+                break;
+
+            case 38: // up
+                ySpaceship = ySpaceship - delta;
+                break;
+
+            case 39: // right
+                xSpaceship = xSpaceship + delta;
+                break;
+
+            case 40: // down
+                ySpaceship = ySpaceship + delta;
+                break;
+
+            default:
+                return; // exit this handler for other keys
+        }
+        e.preventDefault(); // prevent the default action (scroll / move caret)
+    });
+
+    var update = function () {
     };
 
     var paint_spaceship_on_screen = function (ctx) {
@@ -32,7 +56,7 @@ jQuery(function () {
         ctx.fillRect(0, 0, 400, 400);
     };
 
-    var render = function() {
+    var render = function () {
         clear_screen(ctx);
         paint_spaceship_on_screen(ctx);
     };
@@ -44,9 +68,9 @@ jQuery(function () {
 
         setTimeout(function () {
             oneTickProcess();
-        }, 500);
+        }, 20);
     };
 
     oneTickProcess();
 });
-var controls = require('./controls');
+//var controls = require('./controls');
