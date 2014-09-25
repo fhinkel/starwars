@@ -49,3 +49,4 @@ jQuery(function () {
 
     oneTickProcess();
 });
+var controls = require('./controls');
