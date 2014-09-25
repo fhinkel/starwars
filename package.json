@@ -1,0 +1,28 @@
+{
+  "name": "starwars",
+  "version": "0.0.0",
+  "description": "starwars ========",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fhinkel/starwars.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fhinkel/starwars/issues"
+  },
+  "homepage": "https://github.com/fhinkel/starwars",
+  "dependencies": {
+    "webpack": "^1.4.3"
+  },
+  "devDependencies": {
+    "es6-loader": "^0.2.0",
+    "jquery": "^2.1.1",
+    "webpack-dev-server": "^1.6.5"
+  }
+}
