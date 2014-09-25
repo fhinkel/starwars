@@ -1,14 +1,13 @@
 var jQuery = require('jquery');
 
 var Polygon = function (origin, angles) {
-    this.x = origin[0];
-    this.y = origin[1];
+    this.origin = origin;
     this.angles = angles;
     this.dead = false;
 
     this.draw = function (ctx) {
-        this.y = this.y + 1;
-        if (this.y > 400) {
+        this.origin[1] = this.origin[1] + 2;
+        if (this.origin[1] > 400) {
             this.dead = true;
         }
 
@@ -16,7 +15,7 @@ var Polygon = function (origin, angles) {
         for (var i = 0; i < this.angles.length; i++) {
             var x = 20 * Math.cos(2 * Math.PI * this.angles[i]);
             var y = 20 * Math.sin(2 * Math.PI * this.angles[i]);
-            ctx.lineTo(this.x + x, this.y + y);
+            ctx.lineTo(this.origin[0] + x, this.origin[1] + y);
         }
         ctx.closePath();
         ctx.strokeStyle = "#000";
@@ -33,14 +32,12 @@ jQuery(function () {
 
     var xSpaceship = 200;
     var ySpaceship = 200;
-    var polygon = [];
-    polygon[polygon.length] = new Polygon([100, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
-    polygon[polygon.length] = new Polygon([200, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
+    var radiusSpaceship = 10;
+    var polygon1 = new Polygon([100, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
 
     var processInput = function () {
     };
 
-    console.log('blubb');
     jQuery(document).keyup(function (e) {
         var delta = 10;
         switch (e.which) {
@@ -66,12 +63,32 @@ jQuery(function () {
         e.preventDefault(); // prevent the default action (scroll / move caret)
     });
 
+    var calculateCollision = function ()
+    {
+        var asteroidCenter = polygon1.origin;
+        var xA = asteroidCenter[0];
+        var yA = asteroidCenter[1];
+        var fakeAsteroidRadius = radiusSpaceship;
+
+        var xDelta = Math.abs(xA-xSpaceship);
+        var yDelta = Math.abs(yA-ySpaceship);
+
+        var radiusSumSquare = (fakeAsteroidRadius + radiusSpaceship ) * (fakeAsteroidRadius + radiusSpaceship );
+        return (xDelta * xDelta + yDelta *yDelta < radiusSumSquare)
+    };
+
     var update = function () {
+        var crashed = calculateCollision();
+        if (crashed) {
+            jQuery( "body" ).prepend( "<p>CrashBoom</p>" );
+            xSpaceship = 200;
+            ySpaceship = 200;
+        }
     };
 
     var paint_spaceship_on_screen = function (ctx) {
         ctx.beginPath();
-        ctx.arc(xSpaceship, ySpaceship, 10, 0, Math.PI * 2, false);
+        ctx.arc(xSpaceship, ySpaceship, radiusSpaceship, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.strokeStyle = "#000";
         ctx.stroke();
@@ -87,19 +104,10 @@ jQuery(function () {
     var render = function () {
         clear_screen(ctx);
         paint_spaceship_on_screen(ctx);
-        for (var i = 0; i < polygon.length; i++) {
-            polygon[i].draw(ctx);
+	polygon1.draw(ctx);
+        if (polygon1.dead) {
+            polygon1 = new Polygon([Math.floor(Math.random() * 400) + 1, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
         }
-        var polygon_new = [];
-        for (var i = 0; i < polygon.length; i++) {
-            if (polygon[i].dead) {
-                var polygon1 = new Polygon([Math.floor(Math.random() * 400) + 1, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
-            } else {
-                var polygon1 = polygon[i];
-            }
-            polygon_new[polygon_new.length] = polygon1;
-        }
-        polygon = polygon_new;
     };
 
     var oneTickProcess = function () {
