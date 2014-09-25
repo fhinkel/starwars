@@ -14,11 +14,10 @@ jQuery(function () {
 
     console.log('blubb');
     jQuery(document).keyup(function (e) {
-        var delta = 5;
+        var delta = 10;
         switch (e.which) {
             case 37: // left
-                console.log('left');
-            xSpaceship = xSpaceship - delta;
+                xSpaceship = xSpaceship - delta;
                 break;
 
             case 38: // up
@@ -69,7 +68,7 @@ jQuery(function () {
 
         setTimeout(function () {
             oneTickProcess();
-        }, 500);
+        }, 20);
     };
 
     oneTickProcess();
