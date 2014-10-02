@@ -1,4 +1,5 @@
 var jQuery = require('jquery');
+var controls = require('./controls');
 
 var Polygon = function (origin, angles) {
     this.origin = origin;
@@ -53,8 +54,14 @@ jQuery(function () {
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
-    var xSpaceship = 200;
-    var ySpaceship = 200;
+    var spaceship = {
+        x: 200,
+        y: 200,
+        reset: function() {
+            spaceship.x = 200;
+            spaceship.y = 200;
+        }
+    };
     var radiusSpaceship = 10;
     var polygon1 = new Polygon([100, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
     var polygon2 = new Polygon([200, 300], [0, .1, .25, .35, .5, .65, .75, .9]);
@@ -63,23 +70,25 @@ jQuery(function () {
     var processInput = function () {
     };
 
+
+
     jQuery(document).keyup(function (e) {
         var delta = 10;
         switch (e.which) {
             case 37: // left
-                xSpaceship = xSpaceship - delta;
+                spaceship.x = spaceship.x - delta;
                 break;
 
             case 38: // up
-                ySpaceship = ySpaceship - delta;
+                spaceship.y = spaceship.y - delta;
                 break;
 
             case 39: // right
-                xSpaceship = xSpaceship + delta;
+                spaceship.x = spaceship.x + delta;
                 break;
 
             case 40: // down
-                ySpaceship = ySpaceship + delta;
+                spaceship.y = spaceship.y + delta;
                 break;
 
             default:
@@ -94,8 +103,8 @@ jQuery(function () {
         var yA = asteroidCenter[1];
         var fakeAsteroidRadius = radiusSpaceship;
 
-        var xDelta = Math.abs(xA - xSpaceship);
-        var yDelta = Math.abs(yA - ySpaceship);
+        var xDelta = Math.abs(xA - spaceship.x);
+        var yDelta = Math.abs(yA - spaceship.y);
 
         var radiusSumSquare = (fakeAsteroidRadius + radiusSpaceship ) * (fakeAsteroidRadius + radiusSpaceship );
         return (xDelta * xDelta + yDelta * yDelta < radiusSumSquare)
@@ -108,14 +117,13 @@ jQuery(function () {
         if (crashed) {
             hitCount = hitCount + 1;
             jQuery("#hitCount").text(hitCount);
-            xSpaceship = 200;
-            ySpaceship = 200;
+            spaceship.reset();
         }
     };
 
     var paint_spaceship_on_screen = function (ctx) {
         ctx.beginPath();
-        ctx.arc(xSpaceship, ySpaceship, radiusSpaceship, 0, Math.PI * 2, false);
+        ctx.arc(spaceship.x, spaceship.y, radiusSpaceship, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.strokeStyle = "#000";
         ctx.stroke();
@@ -157,7 +165,6 @@ jQuery(function () {
     };
 
     gameLoop();
+    controls.startTracking(jQuery, spaceship);
 });
-var controls = require('./controls');
 
-controls.startTracking(jQuery);
