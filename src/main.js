@@ -57,7 +57,7 @@ jQuery(function () {
     var spaceship = {
         x: 200,
         y: 200,
-        reset: function() {
+        reset: function () {
             spaceship.x = 200;
             spaceship.y = 200;
         }
@@ -71,8 +71,7 @@ jQuery(function () {
     };
 
 
-
-    jQuery(document).keyup(function (e) {
+    jQuery(document).keydown(function (e) {
         var delta = 10;
         switch (e.which) {
             case 37: // left
@@ -161,7 +160,7 @@ jQuery(function () {
 
         setTimeout(function () {
             gameLoop();
-        }, 20);
+        }, 10);
     };
 
     gameLoop();
