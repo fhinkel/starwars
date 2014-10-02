@@ -4,10 +4,33 @@ var Polygon = function (origin, angles) {
     this.origin = origin;
     this.angles = angles;
     this.dead = false;
+    var direction = Math.floor(Math.random() * 4);
+    this.movePolygon = function () {
+        switch (direction) {
+            case 0: // left
+                this.origin[0] = this.origin[0] - 2;
+                break;
+            case 1: // right
+                this.origin[0] = this.origin[0] + 2;
+                break;
+            case 2: // up
+                this.origin[1] = this.origin[1] - 2;
+                break;
+            case 3: // down
+                this.origin[1] = this.origin[1] + 2;
+                break;
+        }
+    };
 
     this.draw = function (ctx) {
-        this.origin[1] = this.origin[1] + 2;
-        if (this.origin[1] > 400) {
+        this.movePolygon();
+
+        var outOfBounds = function (x, y) {
+            return (x > 400 || x < 0
+                || y > 400 || y < 0);
+        };
+
+        if (outOfBounds(this.origin[0], this.origin[1])) {
             this.dead = true;
         }
 
@@ -26,7 +49,7 @@ var Polygon = function (origin, angles) {
 };
 
 jQuery(function () {
-    console.log('WE ARE LOADED!!!!');
+    var hitCount = 0;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
@@ -34,6 +57,8 @@ jQuery(function () {
     var ySpaceship = 200;
     var radiusSpaceship = 10;
     var polygon1 = new Polygon([100, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
+    var polygon2 = new Polygon([200, 300], [0, .1, .25, .35, .5, .65, .75, .9]);
+    var polygon3 = new Polygon([50, 250], [0, .1, .25, .35, .5, .65, .75, .9]);
 
     var processInput = function () {
     };
@@ -63,24 +88,26 @@ jQuery(function () {
         e.preventDefault(); // prevent the default action (scroll / move caret)
     });
 
-    var calculateCollision = function ()
-    {
-        var asteroidCenter = polygon1.origin;
+    var calculateCollision = function (polygon) {
+        var asteroidCenter = polygon.origin;
         var xA = asteroidCenter[0];
         var yA = asteroidCenter[1];
         var fakeAsteroidRadius = radiusSpaceship;
 
-        var xDelta = Math.abs(xA-xSpaceship);
-        var yDelta = Math.abs(yA-ySpaceship);
+        var xDelta = Math.abs(xA - xSpaceship);
+        var yDelta = Math.abs(yA - ySpaceship);
 
         var radiusSumSquare = (fakeAsteroidRadius + radiusSpaceship ) * (fakeAsteroidRadius + radiusSpaceship );
-        return (xDelta * xDelta + yDelta *yDelta < radiusSumSquare)
+        return (xDelta * xDelta + yDelta * yDelta < radiusSumSquare)
     };
 
     var update = function () {
-        var crashed = calculateCollision();
+        var crashed = calculateCollision(polygon1)
+            || calculateCollision(polygon2)
+            || calculateCollision(polygon3);
         if (crashed) {
-            jQuery( "body" ).prepend( "<p>CrashBoom</p>" );
+            hitCount = hitCount + 1;
+            jQuery("#hitCount").text(hitCount);
             xSpaceship = 200;
             ySpaceship = 200;
         }
@@ -101,25 +128,36 @@ jQuery(function () {
         ctx.fillRect(0, 0, 400, 400);
     };
 
+    var redrawPolygonIfMovedOutsideOfScreen = function (polygon) {
+        if (polygon.dead) {
+            polygon = new Polygon([Math.floor(Math.random() * 400) + 1, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
+        }
+        return polygon;
+    };
+
     var render = function () {
         clear_screen(ctx);
         paint_spaceship_on_screen(ctx);
-	polygon1.draw(ctx);
-        if (polygon1.dead) {
-            polygon1 = new Polygon([Math.floor(Math.random() * 400) + 1, 0], [0, .1, .25, .35, .5, .65, .75, .9]);
-        }
+        polygon1.draw(ctx);
+        polygon2.draw(ctx);
+        polygon3.draw(ctx);
+        polygon1 = redrawPolygonIfMovedOutsideOfScreen(polygon1);
+        polygon2 = redrawPolygonIfMovedOutsideOfScreen(polygon2);
+        polygon3 = redrawPolygonIfMovedOutsideOfScreen(polygon3);
     };
 
-    var oneTickProcess = function () {
+    var gameLoop = function () {
         processInput();
         update();
         render();
 
         setTimeout(function () {
-            oneTickProcess();
+            gameLoop();
         }, 20);
     };
 
-    oneTickProcess();
+    gameLoop();
 });
-//var controls = require('./controls');
+var controls = require('./controls');
+
+controls.startTracking(jQuery);
