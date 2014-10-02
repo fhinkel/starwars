@@ -49,7 +49,7 @@ var Polygon = function (origin, angles) {
 };
 
 jQuery(function () {
-    console.log('WE ARE LOADED!!!!');
+    var hitCount = 0;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
@@ -106,7 +106,8 @@ jQuery(function () {
             || calculateCollision(polygon2)
             || calculateCollision(polygon3);
         if (crashed) {
-            jQuery("body").prepend("<p>CrashBoom</p>");
+            hitCount = hitCount + 1;
+            jQuery("#hitCount").text(hitCount);
             xSpaceship = 200;
             ySpaceship = 200;
         }
@@ -157,4 +158,6 @@ jQuery(function () {
 
     gameLoop();
 });
-//var controls = require('./controls');
+var controls = require('./controls');
+
+controls.startTracking(jQuery);
